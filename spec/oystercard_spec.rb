@@ -15,14 +15,14 @@ describe Oystercard do
     expect{ subject.topup(5) }.to raise_error("Maximum balance #{Oystercard::MAXIMUM_CREDIT}")
   end
 
-  it 'should deduct the cost of the fare from the balance' do
-    expect(subject).to respond_to(:deduct)
-  end
+  # it 'should deduct the cost of the fare from the balance' do
+  #   expect(subject).to respond_to(:deduct)
+  # end
 
   it 'should decrease the balance by fare amount' do
     subject.topup(10)
-    subject.deduct(5)
-    expect(subject.balance).to eq (5)
+    subject.touch_out
+    expect(subject.balance).to eq (9)
   end
 
   it 'should check if in a journey' do
@@ -44,5 +44,11 @@ describe Oystercard do
 
   it "should a user touching in without the minimum balance" do
     expect{ subject.touch_in }.to raise_error("Minimum balance #{Oystercard::MINIMUM_BALANCE}")
+  end
+
+  it 'should deduct the minimum fare from the card' do
+    subject.topup(1)
+    subject.touch_in
+    expect{ subject.touch_out }.to change { subject.balance }.by( -Oystercard::MINIMUM_BALANCE )
   end
 end
