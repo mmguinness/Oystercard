@@ -13,18 +13,14 @@ describe Oystercard do
     expect(subject.balance).to eq (5)
   end
 
-  it 'should not allow the user to top up above £90' do
+  it 'should not allow the user to top up above maximum limit' do
     subject.topup(Oystercard::MAXIMUM_CREDIT)
     expect{ subject.topup(5) }.to raise_error("Maximum balance #{Oystercard::MAXIMUM_CREDIT}")
   end
 
-  # it 'should deduct the cost of the fare from the balance' do
-  #   expect(subject).to respond_to(:deduct)
-  # end
-
   it 'should decrease the balance by fare amount' do
     subject.topup(10)
-    subject.touch_out
+    subject.touch_out(:station)
     expect(subject.balance).to eq (9)
   end
 
@@ -41,22 +37,21 @@ describe Oystercard do
   it 'should confirm that we are no longer in a journey' do
     subject.topup(1)
     subject.touch_in(:station)
-    subject.touch_out
+    subject.touch_out(:station)
     expect(subject).not_to be_in_journey
   end
 
-  it "should a user touching in without the minimum balance" do
+  it "should stop a user touching in without the minimum balance" do
     expect{ subject.touch_in(:station) }.to raise_error("Minimum balance #{Oystercard::MINIMUM_BALANCE}")
   end
 
   it 'should deduct the minimum fare from the card' do
     subject.topup(1)
     subject.touch_in(:station)
-    expect{ subject.touch_out }.to change { subject.balance }.by( -Oystercard::MINIMUM_BALANCE )
+    expect{ subject.touch_out(:station) }.to change { subject.balance }.by( -Oystercard::MINIMUM_BALANCE )
   end
 
   it 'should record the entry station of current journey' do
-    # station_double = double('station')
     subject.topup(1)
     subject.touch_in(:station)
     expect(subject.entry_station.length).to eq(1)
@@ -65,7 +60,19 @@ describe Oystercard do
   it 'should forget the entry station on touch out' do
     subject.topup(1)
     subject.touch_in(:station)
-    expect{ subject.touch_out }.to change { subject.entry_station.length }.by( -1 )
+    expect{ subject.touch_out(:station) }.to change { subject.entry_station.length }.by( -1 )
+  end
+  
+  let(:journey){ {entry: :station, exit: :station}}
+  it 'should record a list of all journeys' do
+    subject.topup(1)
+    subject.touch_in(:station)
+    subject.touch_out(:station)
+    expect(subject.history).to include journey
+  end
+
+  it 'should start with no journeys saved on card' do
+    expect(subject.history.size).to be_zero
   end
 
 end

@@ -1,6 +1,5 @@
 class Oystercard 
   attr_accessor :balance
-  # attr_accessor :journey_status
   attr_reader :entry_station
 
   MAXIMUM_CREDIT = 90
@@ -8,8 +7,9 @@ class Oystercard
 
   def initialize
     @balance = 0
-    # @journey_status = false
     @entry_station = []
+    @exit_station = []
+    @history = []
   end
 
   def topup(credit)
@@ -23,17 +23,29 @@ class Oystercard
     @entry_station << station_name
   end
 
-  def touch_out
+  def touch_out(station_name)
     in_journey?
     deduct
-    @entry_station.clear
+    @exit_station << station_name
+    self.save_history
   end
 
   def in_journey?
     @entry_station.length > 0
   end
+
+  def history
+    @history
+  end
   
   private
+
+  def save_history
+    journey = Hash.new
+    journey[:entry] = @entry_station.pop
+    journey[:exit] = @exit_station.pop
+    @history << journey
+  end
   
   def deduct
     @balance -= MINIMUM_BALANCE
