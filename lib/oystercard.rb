@@ -1,15 +1,20 @@
+require_relative './journey'
+
 class Oystercard 
-  attr_accessor :balance
-  attr_reader :entry_station
+  # attr_accessor :balance
+  attr_accessor :entry_station
+  attr_accessor :exit_station
 
   MAXIMUM_CREDIT = 90
   MINIMUM_BALANCE = 1
+  PENALTY_FARE = 6
 
   def initialize
     @balance = 0
     @entry_station = []
     @exit_station = []
     @history = []
+    @holder_journey = Journey.new
   end
 
   def topup(credit)
@@ -19,26 +24,27 @@ class Oystercard
 
   def touch_in(station_name)
     fail "Minimum balance #{MINIMUM_BALANCE}" if @balance < MINIMUM_BALANCE
-    in_journey?
     @entry_station << station_name
   end
 
   def touch_out(station_name)
-    in_journey?
+    if holder_journey.active == true then @exit_station << station_name end
     deduct
-    @exit_station << station_name
-    self.save_history
-  end
-
-  def in_journey?
-    @entry_station.length > 0
   end
 
   def history
     @history
   end
+
+  def holder_journey
+    @holder_journey
+  end
+
+  def balance
+    @balance
+  end
   
-  private
+  # private
 
   def save_history
     journey = Hash.new
@@ -48,7 +54,6 @@ class Oystercard
   end
   
   def deduct
-    @balance -= MINIMUM_BALANCE
+    @balance -= (holder_journey.fare)
   end
-
 end
