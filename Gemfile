@@ -1,11 +1,12 @@
-source 'https://rubygems.org'
+# frozen_string_literal: true
 
-ruby '3.0.2'
+source "https://rubygems.org"
 
-group :test do
-  gem 'rspec'
-end
+git_source(:GitHub) { |repo_name| "https://github.com/#{repo_name}" }
+
+ruby '3.1.0'
 
 group :development, :test do
   gem 'rspec'
+
 end
