@@ -14,7 +14,7 @@ class Oystercard
     @entry_station = []
     @exit_station = []
     @history = []
-    @holder_journey = Journey.new
+    @holder_journey = nil
   end
 
   def topup(credit)
@@ -23,13 +23,21 @@ class Oystercard
   end
 
   def touch_in(station_name)
+    # if entry_station == nil then @holder_journey = Journey.new end
+    if entry_station != [] then deduct end
+      #if entry station is not empty, then deduct max fare.
     fail "Minimum balance #{MINIMUM_BALANCE}" if @balance < MINIMUM_BALANCE
     @entry_station << station_name
+    @holder_journey = Journey.new
   end
 
   def touch_out(station_name)
-    if holder_journey.active == true then @exit_station << station_name end
+    if holder_journey.active == false then deduct end
+    #if holder_jounery.active is false, then deduct max fare.
+    if holder_journey == true then @exit_station << station_name end
+    holder_journey.finish
     deduct
+    save_history
   end
 
   def history

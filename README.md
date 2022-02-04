@@ -36,3 +36,6 @@ admin@Maries-MacBook-Pro oystercard_2 % irb
  @history=[],                                          
  @holder_journey=#<Journey:0x000000010bf29728 @active=true>>
 3.1.0 :010 >
+
+
+

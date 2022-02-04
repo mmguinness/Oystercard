@@ -6,10 +6,6 @@ class Journey
     @active = true
   end
 
-  def active
-    @active
-  end
-
   def finish
     @active = false
   end
@@ -22,8 +18,11 @@ class Journey
     end
   end
 
-  def new_journey
-    raise "Journey in progress!" if @active != false
-    @active = true
-  end
+  # def journey_complete?
+  #   if  @active == false
+  #     "Journey complete"
+  #   else
+  #     "journey incomplete"
+  #   end
+  # end
 end
