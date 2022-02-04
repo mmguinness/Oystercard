@@ -4,15 +4,16 @@ require_relative '../lib/oystercard'
 describe Journey do
 
   it 'should start a journey' do
-    expect(subject.active).to be_truthy
+    expect(subject.active).to eq true
   end
 
   it 'should end a joureny' do
     subject.finish
-    expect(subject.active).to be_falsey
+    expect(subject.active).to eq false
   end
 
   it 'should calculate the fare' do
+    
     expect(subject.fare).to eq(Oystercard::MINIMUM_BALANCE)
   end
 

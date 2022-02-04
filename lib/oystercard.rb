@@ -32,11 +32,17 @@ class Oystercard
   end
 
   def touch_out(station_name)
-    if holder_journey.active == false then deduct end
+    if entry_station == [] 
+      @holder_journey = Journey.new
+      deduct
+      
+    else
+      holder_journey.finish
+      deduct
+    end
     #if holder_jounery.active is false, then deduct max fare.
-    if holder_journey == true then @exit_station << station_name end
-    holder_journey.finish
-    deduct
+    @exit_station << station_name
+    
     save_history
   end
 

@@ -6,6 +6,10 @@ class Journey
     @active = true
   end
 
+  def active
+    @active
+  end
+  
   def finish
     @active = false
   end
